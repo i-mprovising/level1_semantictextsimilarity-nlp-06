@@ -1,7 +1,7 @@
 # 문장 간 유사도 측정
 
 # 목차
-[1. 정보](#1-정보) > [2. 팀원](#2-팀원)
+[1. 정보](#1-정보) > [2. 팀원](#2-팀원) > [3. 디렉토리 구조](#3-디렉토리 구조)
 
 # 1. 정보
 
@@ -44,3 +44,22 @@
         </td>
     </tr>
 </table>
+
+# 3. 디렉토리 구조
+
+```bash
+├── level1_semantictextsimilarity-nlp-06
+│   ├── data/ (private)
+│   ├── results/
+│   ├── models/
+│   │   └── model.py
+│   ├── utils/
+│   │   └── data_preprocessing.py
+│   ├── baselines/
+│   │   ├── baseline_config.yml
+│   │   ├── baseline_inference.py
+│   │   └── baseline_train.py
+│   ├── requirements.txt
+│   ├── READMD.md
+│   └── main_process.py
+```
