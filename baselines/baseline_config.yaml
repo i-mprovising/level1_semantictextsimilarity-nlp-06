@@ -1,5 +1,7 @@
-admin: 김기범
+admin: 김기범 # 실험자 이름 변경
+seed: 42
 train:
+  model_name: 
   batch_size:
     - 16
     - 32
@@ -10,3 +12,6 @@ train:
   optim: AdamW
 use_data:
   - original data
+  - BT
+  - swap
+save_path: None
