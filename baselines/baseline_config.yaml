@@ -1,1 +1,12 @@
-ㅅㄱ
+admin: 김기범
+train:
+  batch_size:
+    - 16
+    - 32
+    - 64
+  epoch: 100
+  LR: 1e-5
+  LossF: L1Loss
+  optim: AdamW
+use_data:
+  - original data
