@@ -1,16 +1,16 @@
-import transformers
 import torch
+import torchmetrics
+import pytorch_lightning as pl
 
 class Model(pl.LightningModule):
-    def __init__(self, CFG):
+    def __init__(self, CFG, plm):
         self.save_hyperparameters()
         
         self.model_name = CFG.train.model_name
         self.lr = CFG.train.LR
         
         # 사용할 모델을 호출
-        self.plm = transformers.AutoModelForSequenceClassification.from_pretrained(
-            pretrained_model_name_or_path=self.model_name, num_labels=1)
+        self.plm = plm
         
         # Loss 계산을 위해 사용될 L1Loss를 호출
         self.loss_func = torch.nn.L1Loss()
