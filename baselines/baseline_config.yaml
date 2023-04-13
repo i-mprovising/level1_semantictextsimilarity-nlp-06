@@ -1,15 +1,22 @@
-admin: Kim GiBeom # 실험자 이름 변경
+admin: Kim GiBeom # 실험자 이름
 seed: 42
 train:
   model_name: klue/roberta-small
   batch_size: 32
-  epoch: 1
-  LR: 0.0001
+  epoch: 300
+  LR: 0.0000001
   LossF: L1Loss
   optim: AdamW
   shuffle: True
-  max_len: 60
+  max_len: 130
 select_clean:
-  - example
-select_DP:
-  - example
+  - example1
+  - example2
+  - example3
+select_DA:
+  - example1
+  - example2
+  - example3
+focus_columns:
+  - sentence_1
+  - sentence_2

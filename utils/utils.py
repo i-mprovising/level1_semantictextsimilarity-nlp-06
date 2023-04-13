@@ -12,7 +12,7 @@ def get_folder_name():
     now = datetime.now()
     folder_name = now.strftime('%Y-%m-%d-%H:%M:%S')
     save_path = f'./results/{folder_name}'
-    os.mkdir(save_path)
+    os.makedirs(save_path)
 
     return folder_name, save_path
 
