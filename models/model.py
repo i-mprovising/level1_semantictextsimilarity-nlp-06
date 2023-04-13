@@ -18,30 +18,29 @@ class Model(pl.LightningModule):
         # Loss 계산을 위해 사용될 L1Loss를 호출
         self.loss_func = torch.nn.L1Loss()
     
-    def forward(self, x):
+    def forward(self, x):    
         x = self.plm(x)['logits']
-        
+
         return x
-    
+
     def training_step(self, batch, batch_idx):
         x, y = batch
-        
         logits = self(x)
         loss = self.loss_func(logits, y.float())
-        self.log('train_loss', loss)
-        
-        return loss
-    
-    def validation_step(self, batch, batch_idx):
-        x, y = batch
-        
-        logits = self(x)
-        loss = self.loss_func(logits, y.float())
-        self.log('val_loss', loss)
-        self.log('val_pearson', torchmetrics.functional.pearson_corrcoef(logits.squeeze(), y.squeeze()))
+        self.log("train_loss", loss)
 
         return loss
-    
+
+    def validation_step(self, batch, batch_idx):
+        x, y = batch
+        logits = self(x)
+        loss = self.loss_func(logits, y.float())
+        self.log("val_loss", loss)
+
+        self.log("val_pearson", torchmetrics.functional.pearson_corrcoef(logits.squeeze(), y.squeeze()))
+
+        return loss
+
     def test_step(self, batch, batch_idx):
         x, y = batch
         logits = self(x)
@@ -51,10 +50,9 @@ class Model(pl.LightningModule):
     def predict_step(self, batch, batch_idx):
         x = batch
         logits = self(x)
-        
+
         return logits.squeeze()
-    
+
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(self.parameters(), lr=self.lr)
-        
         return optimizer
