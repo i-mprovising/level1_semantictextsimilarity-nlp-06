@@ -26,5 +26,7 @@ if __name__ == "__main__":
     train_df, _, _ = utils.get_data()
     preprocessed_df = swap_sentence(train_df)
 
-    print("전처리 전", train_df.head(5))
-    print("전처리 후", preprocessed_df.head(5))
+    print('-'*30)
+    print("전처리 전", train_df.head(5), sep='\n')
+    print('-'*30)
+    print("전처리 후", preprocessed_df.head(5), sep='\n')
