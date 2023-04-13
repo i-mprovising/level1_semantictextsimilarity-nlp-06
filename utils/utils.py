@@ -18,9 +18,9 @@ def get_folder_name():
 
 
 def get_data():
-    train_df = pd.read_csv('../data/train.csv')
-    val_df = pd.read_csv('../data/dev.csv')
-    test_df = pd.read_csv('../data/test.csv')
+    train_df = pd.read_csv('./data/train.csv')
+    val_df = pd.read_csv('./data/dev.csv')
+    test_df = pd.read_csv('./data/test.csv')
 
     return train_df, val_df, test_df
 
