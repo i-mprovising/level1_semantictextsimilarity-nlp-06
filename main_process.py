@@ -6,6 +6,8 @@ import pytorch_lightning as pl
 
 from models.model import Model
 from utils import utils, train
+from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -27,10 +29,16 @@ if __name__ == "__main__":
     dataloader = train.Dataloader(tokenizer, CFG['train']['batch_size'], CFG['train']['shuffle'])
     model = Model(CFG)
 
+    # set options
+    # Earlystopping
+    early_stopping = EarlyStopping(monitor='val_loss', patience=5, mode='min')
+
     # train and test
     trainer = pl.Trainer(accelerator='gpu', 
                          max_epochs=CFG['train']['epoch'],
-                         default_root_dir=save_path)
+                         default_root_dir=save_path,
+                         callbacks = [early_stopping])
+    
     trainer.fit(model=model, datamodule=dataloader)
     trainer.test(model=model, datamodule=dataloader)
 
@@ -43,7 +51,7 @@ if __name__ == "__main__":
     # with open(f'{save_path}/{folder_name}_config.yaml', 'w') as f:
     #     yaml.dump(CFG, f)
     # save mode
-    torch.save(model, f'{save_path}/{folder_name}_model.pt')l
+    torch.save(model, f'{save_path}/{folder_name}_model.pt')
     # save submit
     submit = pd.read_csv('./data/sample_submission.csv')
     submit['target'] = pred_y
