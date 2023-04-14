@@ -8,6 +8,7 @@ from models.model import Model
 from utils import utils, train
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from pytorch_lightning.loggers import WandbLogger
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -23,6 +24,10 @@ if __name__ == "__main__":
     # seed 설정
     pl.seed_everything(CFG['seed'])
 
+    # logger 생성
+    wandb_logger = WandbLogger(name=folder_name, project="STS")
+    wandb_logger.experiment.config.update(CFG)
+
     # --- Fit ---
     # load data and model
     tokenizer = transformers.AutoTokenizer.from_pretrained(CFG['train']['model_name'], max_length=CFG['train']['max_len'])
@@ -37,7 +42,8 @@ if __name__ == "__main__":
     trainer = pl.Trainer(accelerator='gpu',
                          max_epochs=CFG['train']['epoch'],
                          default_root_dir=save_path,
-                         log_every_n_steps=10)
+                         log_every_n_steps=10,
+                         logger = wandb_logger)
                         #  callbacks = [early_stopping])
     
     trainer.fit(model=model, datamodule=dataloader)
