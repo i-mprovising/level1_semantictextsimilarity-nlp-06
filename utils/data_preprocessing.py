@@ -35,12 +35,19 @@ def text_style_transfer(df):
       return out[0]['generated_text']
     
     augmented_df = pd.DataFrame(columns=df.columns)
+    
     for style in styles:
-        for i, item in df.iterrows():
-            tmp = pd.DataFrame(item).transpose()
-            tmp['sentence_1'] = get_transferred_text(item['sentence_1'], style)
-            tmp['sentence_2'] = get_transferred_text(item['sentence_2'], style)
-            augmented_df = pd.concat([augmented_df, tmp], axis=0)
+        tmp = df.copy()
+        sentence_1 = []
+        sentence_2 = []
+        for i in tqdm(range(len(df)), desc=style):
+            item = df.iloc[i]
+            sentence_1.append(get_transferred_text(item['sentence_1'], style))
+            sentence_2.append(get_transferred_text(item['sentence_2'], style))
+        tmp['sentence_1'] = sentence_1
+        tmp['sentence_2'] = sentence_2
+        augmented_df = pd.concat([augmented_df, tmp])
+        
     return augmented_df
 
 def back_translation(df):
