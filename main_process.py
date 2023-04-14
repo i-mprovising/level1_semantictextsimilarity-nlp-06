@@ -30,21 +30,21 @@ if __name__ == "__main__":
 
     # --- Fit ---
     # load data and model
-    tokenizer = transformers.AutoTokenizer.from_pretrained(CFG['train']['model_name'], max_length=CFG['train']['max_len'])
+    tokenizer = transformers.AutoTokenizer.from_pretrained(CFG['train']['model_name'])
     dataloader = train.Dataloader(tokenizer, CFG['train']['batch_size'], CFG['train']['shuffle'], CFG['select_clean'], CFG['select_DA'])
     model = Model(CFG)
 
     # set options
     # Earlystopping
-    # early_stopping = EarlyStopping(monitor='val_loss', patience=5, mode='min')
+    early_stopping = EarlyStopping(monitor='val_loss', patience=5, mode='min')
 
     # train and test
     trainer = pl.Trainer(accelerator='gpu',
                          max_epochs=CFG['train']['epoch'],
                          default_root_dir=save_path,
                          log_every_n_steps=10,
-                         logger = wandb_logger)
-                        #  callbacks = [early_stopping])
+                         logger = wandb_logger,
+                         callbacks = [early_stopping])
     
     trainer.fit(model=model, datamodule=dataloader)
     trainer.test(model=model, datamodule=dataloader)
