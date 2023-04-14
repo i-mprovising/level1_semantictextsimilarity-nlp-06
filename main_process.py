@@ -31,7 +31,7 @@ if __name__ == "__main__":
     # --- Fit ---
     # load data and model
     tokenizer = transformers.AutoTokenizer.from_pretrained(CFG['train']['model_name'], max_length=CFG['train']['max_len'])
-    dataloader = train.Dataloader(tokenizer, CFG['train']['batch_size'], CFG['train']['shuffle'])
+    dataloader = train.Dataloader(tokenizer, CFG['train']['batch_size'], CFG['train']['shuffle'], CFG['select_clean'], CFG['select_DA'])
     model = Model(CFG)
 
     # set options
