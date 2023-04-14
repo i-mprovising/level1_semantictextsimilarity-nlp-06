@@ -20,6 +20,7 @@ if __name__ == "__main__":
         CFG = yaml.load(f, Loader=yaml.FullLoader)
     # 실험 결과 저장할 폴더 생성
     folder_name, save_path = utils.get_folder_name()
+    save_path += f"_{CFG['admin']}"
     CFG['save_path'] = save_path
     # seed 설정
     pl.seed_everything(CFG['seed'])
@@ -31,7 +32,7 @@ if __name__ == "__main__":
     # --- Fit ---
     # load data and model
     tokenizer = transformers.AutoTokenizer.from_pretrained(CFG['train']['model_name'], max_length=CFG['train']['max_len'])
-    dataloader = train.Dataloader(tokenizer, CFG['train']['batch_size'], CFG['train']['shuffle'])
+    dataloader = train.Dataloader(tokenizer, CFG)
     model = Model(CFG)
 
     # set options

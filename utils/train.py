@@ -1,6 +1,6 @@
 import torch
 from utils import utils
-import utils.data_preprocessing as dp
+import utils.data_preprocessing as DP
 import pytorch_lightning as pl
 
 from tqdm.auto import tqdm
@@ -21,12 +21,15 @@ class Dataset(Dataset):
         return len(self.inputs)
 
 class Dataloader(pl.LightningDataModule):
-    def __init__(self, tokenizer, batch_size, shuffle):
+    def __init__(self, tokenizer, CFG):
         super(Dataloader, self).__init__()
-        self.batch_size = batch_size
-        self.shuffle = shuffle
-
+        self.batch_size = CFG['train']['batch_size']
+        self.shuffle = CFG['train']['shuffle']
+        self.seed = CFG['seed']
+        
         train_df, val_df, predict_df = utils.get_data()
+        # 김기범이고 df_split이 True라면 데이터셋을 다시 분리
+        if CFG['admin'] == 'KGB' and CFG['df_split']: train_df, val_df = DP.df_split(train_df, val_df, self.seed)
 
         self.train_df = train_df
         self.val_df = val_df
