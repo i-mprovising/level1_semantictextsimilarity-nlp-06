@@ -26,7 +26,7 @@ if __name__ == "__main__":
     pl.seed_everything(CFG['seed'])
 
     # logger 생성
-    wandb_logger = WandbLogger(name=folder_name, project="STS")
+    wandb_logger = WandbLogger(name=folder_name, project="STS", save_dir=save_path)
     wandb_logger.experiment.config.update(CFG)
 
     # --- Fit ---
