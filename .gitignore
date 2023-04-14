@@ -6,6 +6,7 @@
 # website: http://jupyter.org/
 .*
 nohup.out
+results/
 data/
 .idea/
 .ipynb_checkpoints
