@@ -3,7 +3,7 @@ seed: 42
 train:
   model_name: beomi/kcbert-base
   batch_size: 64
-  epoch: 100
+  epoch: 1
   LR: 0.00001
   LossF: MSE
   optim: AdamW
@@ -11,10 +11,6 @@ train:
   max_len: 200
 df_split: True
 select_clean:
-  - example1
-  - example2
-  - example3
+  - remove_special_word
 select_DA:
-  - example1
-  - example2
-  - example3
+  - swap_sentence
