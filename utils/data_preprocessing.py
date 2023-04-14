@@ -2,7 +2,6 @@ import pandas as pd
 import utils
 import random
 
-from sklearn.model_selection import train_test_split
 from tqdm.auto import tqdm
 
 # spellceck
@@ -18,34 +17,43 @@ def remove_special_word(df):
 
     return df
 
-def df_split(train_df, val_df, seed):
-    """
-    대회에서 제공한 train과 val 데이터를 합치고 다시 나누기
-    """
-    X = pd.concat([train_df, val_df], axis=0)
-    y = X['label']
-    X.drop(['label'], axis=1, inplace=True)
 
-    train_x, val_x, train_y, val_y = train_test_split(X, y, test_size=0.055, stratify=y, random_state=seed)
-
-    train_x['label'] = train_y
-    val_x['label'] = val_y
-
-    return train_x, val_x
-
-def random_deletion(x):
+def random_deletion(df):
     """
     apply로 실행시켜야 하는 랜덤 삭제 기법
+    조합 3개 (ww표시가 전처리 된 거)
+    1. sen_1, sen_2ww
+    2. sen_1ww, sen_2
+    3. sen_1ww, sen_3ww
     """
-    x = x.split()
-    random_item = random.choice(x)
-    
-    try:
+    def func(x):
+        x = x.split()
+        random_item = random.choice(x)
         x.remove(random_item)
-    except:
-        print(x)
 
-    return ' '.join(x)
+        return ' '.join(x)
+    
+    sen_1ww = df['sentence_1'] = df['sentence_1'].apply(lambda x: func(x)).values.tolist()
+    sen_2ww = df['sentence_2'] = df['sentence_2'].apply(lambda x: func(x)).values.tolist()
+
+    sen_1, sen_2, labels = [], [], [label for _ in range(3) for label in df['label']]
+
+    # 1
+    sen_1.extend(df['sentence_1'].values.tolist())
+    sen_2.extend(sen_2ww)
+    # 2
+    sen_1.extend(sen_1ww)
+    sen_2.extend(df['sentence_2'].values.tolist())
+    # 3
+    sen_1.extend(sen_1ww)
+    sen_2.extend(sen_2ww)
+
+    new_df = pd.DataFrame()
+    new_df['sentence_1'] = sen_1
+    new_df['sentence_2'] = sen_2
+    new_df['label'] = labels
+
+    return new_df
 
 def swap_sentence(df:pd.DataFrame) -> pd.DataFrame:
     """
@@ -116,3 +124,11 @@ if __name__ == "__main__":
     print("전처리 전", train_df.head(5), sep='\n')
     print('-'*30)
     print("전처리 후", preprocessed_df.head(5), sep='\n')
+
+    random_deletion_df = random_deletion(train_df)
+    print('-'*30)
+    print('random deletion 전,', train_df.shape)
+    print('random deletion 후,', random_deletion_df.shape)
+    new_df = pd.concat([train_df, random_deletion_df], axis=0)
+    print(new_df.shape)
+    print('-'*30)

@@ -1,8 +1,10 @@
 import torch
+import pandas as pd
 from utils import utils
 import utils.data_preprocessing as DP
 import pytorch_lightning as pl
 
+from sklearn.model_selection import train_test_split
 from tqdm.auto import tqdm
 from torch.utils.data import Dataset, DataLoader
 from utils.process_manipulator import SequentialCleaning as SC, SequentialAugmentation as SA
@@ -27,13 +29,15 @@ class Dataloader(pl.LightningDataModule):
         self.batch_size = CFG['train']['batch_size']
         self.shuffle = CFG['train']['shuffle']
         self.seed = CFG['seed']
+        self.admin = CFG['admin']
         
         train_df, val_df, predict_df = utils.get_data()
         # 김기범이고 df_split이 True라면 데이터셋을 다시 분리
-        if CFG['admin'] == 'KGB' and CFG['df_split']: train_df, val_df = DP.df_split(train_df, val_df, self.seed)
-
-        self.train_df = train_df
-        self.val_df = val_df
+        if self.admin == 'KGB':
+            self.train_df = pd.concat([train_df, val_df], axis=0)
+        else:
+            self.train_df = train_df
+            self.val_df = val_df
         self.predict_df = predict_df # test.csv
 
         self.train_dataset = None
@@ -81,15 +85,22 @@ class Dataloader(pl.LightningDataModule):
         if stage == 'fit':
             # 학습 데이터 준비
             train_inputs, train_targets = self.preprocessing(self.train_df, train=True)
+            
             # 검증 데이터 준비
-            val_inputs, val_targets = self.preprocessing(self.val_df)
+            if self.admin == 'KGB':
+                train_inputs, val_inputs, train_targets, val_targets = train_test_split(train_inputs, train_targets, 
+                                                                                        test_size=0.055, 
+                                                                                        stratify=train_targets, 
+                                                                                        random_state=self.seed)
+            else:
+                val_inputs, val_targets = self.preprocessing(self.val_df)
 
             self.train_dataset = Dataset(train_inputs, train_targets)
             self.val_dataset = Dataset(val_inputs, val_targets)
             self.test_dataset = self.val_dataset
         else:
             # 평가 데이터 호출
-            predict_inputs, predict_targets = self.preprocessing(self.predict_df)
+            predict_inputs, predict_targets = self.preprocessing(self.predict_df, train= True if self.admin == 'KGB' else False)
             self.predict_dataset = Dataset(predict_inputs, predict_targets)
 
     def train_dataloader(self):

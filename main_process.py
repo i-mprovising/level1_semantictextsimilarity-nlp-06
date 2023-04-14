@@ -19,9 +19,7 @@ if __name__ == "__main__":
     with open('baselines/baseline_config.yaml') as f:
         CFG = yaml.load(f, Loader=yaml.FullLoader)
     # 실험 결과 저장할 폴더 생성
-    folder_name, save_path = utils.get_folder_name()
-    save_path += f"_{CFG['admin']}"
-    CFG['save_path'] = save_path
+    folder_name, save_path = utils.get_folder_name(CFG)
     # seed 설정
     pl.seed_everything(CFG['seed'])
 
@@ -37,15 +35,15 @@ if __name__ == "__main__":
 
     # set options
     # Earlystopping
-    # early_stopping = EarlyStopping(monitor='val_loss', patience=5, mode='min')
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, mode='min')
 
     # train and test
     trainer = pl.Trainer(accelerator='gpu',
                          max_epochs=CFG['train']['epoch'],
                          default_root_dir=save_path,
                          log_every_n_steps=10,
-                         logger = wandb_logger)
-                        #  callbacks = [early_stopping])
+                         logger = wandb_logger,
+                         callbacks = [early_stopping])
     
     trainer.fit(model=model, datamodule=dataloader)
     trainer.test(model=model, datamodule=dataloader)
