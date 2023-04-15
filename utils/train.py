@@ -100,7 +100,7 @@ class Dataloader(pl.LightningDataModule):
             self.test_dataset = self.val_dataset
         else:
             # 평가 데이터 호출
-            predict_inputs, predict_targets = self.preprocessing(self.predict_df, train= True if self.admin == 'KGB' else False)
+            predict_inputs, predict_targets = self.preprocessing(self.predict_df)
             self.predict_dataset = Dataset(predict_inputs, predict_targets)
 
     def train_dataloader(self):

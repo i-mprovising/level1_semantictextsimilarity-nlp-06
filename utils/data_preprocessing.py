@@ -20,7 +20,8 @@ def remove_special_word(df):
 
 def random_deletion(df):
     """
-    apply로 실행시켜야 하는 랜덤 삭제 기법
+    apply로 실행시켜야 함
+    k개의 워드를 랜덤으로 삭제 기법 (일단 k=1) -> 나중에 보유 문장 길이에 따라 동적으로 변경시킬 예정
     조합 3개 (ww표시가 전처리 된 거)
     1. sen_1, sen_2ww
     2. sen_1ww, sen_2
@@ -36,7 +37,8 @@ def random_deletion(df):
     sen_1ww = df['sentence_1'] = df['sentence_1'].apply(lambda x: func(x)).values.tolist()
     sen_2ww = df['sentence_2'] = df['sentence_2'].apply(lambda x: func(x)).values.tolist()
 
-    sen_1, sen_2, labels = [], [], [label for _ in range(3) for label in df['label']]
+    sen_1, sen_2 = [], []
+    labels = [label for _ in range(3) for label in df['label']] if 'label' in df.columns else []
 
     # 1
     sen_1.extend(df['sentence_1'].values.tolist())
@@ -51,7 +53,7 @@ def random_deletion(df):
     new_df = pd.DataFrame()
     new_df['sentence_1'] = sen_1
     new_df['sentence_2'] = sen_2
-    new_df['label'] = labels
+    if labels: new_df['label'] = labels
 
     return new_df
 
