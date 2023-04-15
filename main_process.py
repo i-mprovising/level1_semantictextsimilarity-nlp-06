@@ -3,6 +3,7 @@ import torch
 import transformers
 import pandas as pd
 import pytorch_lightning as pl
+import wandb
 
 from models.model import Model
 from utils import utils, train
@@ -24,7 +25,8 @@ if __name__ == "__main__":
     pl.seed_everything(CFG['seed'])
 
     # logger 생성
-    wandb_logger = WandbLogger(name=folder_name, project="STS", save_dir=save_path)
+    wandb.init(name=folder_name, project="STS", entity="boostcamp_nlp_06")
+    wandb_logger = WandbLogger(save_dir=save_path)
     wandb_logger.experiment.config.update(CFG)
 
     # # --- Fit ---
