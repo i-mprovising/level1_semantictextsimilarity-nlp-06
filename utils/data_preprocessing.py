@@ -73,45 +73,6 @@ def swap_sentence(df:pd.DataFrame) -> pd.DataFrame:
     swapped_df = df.copy(deep=True)
     swapped_df['sentence_1'], swapped_df['sentence_2'] = swapped_df['sentence_2'], swapped_df['sentence_1']
     return swapped_df
-def text_style_transfer(df):
-    """
-    text style을 두 가지로 바꾸는 augmentation. 
-    
-    필요 라이브러리 :
-    pip install transformers
-    
-    Args:
-        df (pd.DataFrame): 원본 train data
-    Returns:
-        pd.DataFrame    
-    """
-    model = pipeline(
-    'text2text-generation',
-    model='heegyu/kobart-text-style-transfer'
-    )
-    styles = ['문어체','구어체']
-    
-    #스타일이 바뀐 문장을 반환하는 함수.
-    def get_transferred_text(text, target_style, **kwargs):
-      input = f"{target_style} 말투로 변환:{text}"
-      out = model(input, max_length=64, **kwargs)
-      return out[0]['generated_text']
-    
-    augmented_df = pd.DataFrame(columns=df.columns)
-    
-    for style in styles:
-        tmp = df.copy()
-        sentence_1 = []
-        sentence_2 = []
-        for i in tqdm(range(len(df)), desc=style):
-            item = df.iloc[i]
-            sentence_1.append(get_transferred_text(item['sentence_1'], style))
-            sentence_2.append(get_transferred_text(item['sentence_2'], style))
-        tmp['sentence_1'] = sentence_1
-        tmp['sentence_2'] = sentence_2
-        augmented_df = pd.concat([augmented_df, tmp])
-        
-    return augmented_df
 
 def back_translation(df):
     """
@@ -190,7 +151,6 @@ def spellcheck(df):
 
 def text_style_transfer(df):
     return pd.read_csv("./data/cleaned_text_style_transfer.csv")
-
 
 # 전처리 코드 테스트
 if __name__ == "__main__":
