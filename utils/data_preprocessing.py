@@ -75,37 +75,6 @@ def swap_sentence(df:pd.DataFrame) -> pd.DataFrame:
     swapped_df['sentence_1'], swapped_df['sentence_2'] = swapped_df['sentence_2'], swapped_df['sentence_1']
     return swapped_df
 
-def back_translation(df):
-    """
-    각 sentence를 영어로 번역 후 다시 한글로 번역한 데이터를 사용하는 augmentation.
-    
-    필요 라이브러리 :
-    pip install googletrans==4.0.0-rc1
-    
-    Args:
-        df (pd.DataFrame): 원본 train data
-    Returns:
-        pd.DataFrame    
-    """
-    #한글 문장을 받아 영어로 번역하고 다시 한글로 번역한 문장을 반환하는 함수.
-    def back_translate(sentence): 
-        translator = Translator()
-        en_translate = translator.translate(sentence, src="ko", dest="en")
-        ko_translate = translator.translate(en_translate.text, src="en", dest="ko")
-        return ko_translate.text
-    
-    bt_df = df.copy()
-    bt_sentence_1 = []
-    bt_sentence_2 = []
-    for i in tqdm(range(len(bt_df)), desc='BT'):
-        bt_sentence_1.append(back_translate(bt_df.loc[i,"sentence_1"]))
-        bt_sentence_2.append(back_translate(bt_df.loc[i,"sentence_2"]))
-    
-    bt_df['sentence_1'] = bt_sentence_1
-    bt_df['sentence_2'] = bt_sentence_2
-
-    return bt_df
-
 def spellcheck(df):
     """
     sentence_1과 sentence_2의 띄어쓰기 및 맟춤법을 교정해주는 함수입니다.
