@@ -1,22 +1,17 @@
-admin: Kim GiBeom # 실험자 이름
+admin: KGB # 실험자 이름
+patience: 5
 seed: 42
 train:
-  model_name: klue/roberta-small
-  batch_size: 64
+  model_name: snunlp/KR-ELECTRA-discriminator
+  batch_size: 16
   epoch: 100
   LR: 0.00001
-  LossF: L1Loss
+  LossF: MSELoss
   optim: AdamW
   shuffle: True
   max_len: 200
 select_clean:
-  - example1
-  - example2
-  - example3
+  - remove_special_word
 select_DA:
-  - example1
-  - example2
-  - example3
-focus_columns:
-  - sentence_1
-  - sentence_2
+  - swap_sentence
+  # - random_deletion
