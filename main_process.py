@@ -45,7 +45,7 @@ if __name__ == "__main__":
                          log_every_n_steps=10,
                          logger = wandb_logger,
                          callbacks = [early_stopping])
-    
+     
     trainer.fit(model=model, datamodule=dataloader)
     trainer.test(model=model, datamodule=dataloader)
 
