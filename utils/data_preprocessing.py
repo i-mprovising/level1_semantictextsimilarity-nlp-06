@@ -1,4 +1,5 @@
 import pandas as pd
+import utils
 
 from transformers import pipeline
 from googletrans import Translator
@@ -142,13 +143,14 @@ def spellcheck(df):
 
     return checked_df
 
-
+def text_style_transfer(df):
+    return pd.read_csv("./data/style_data.csv")
 
 
 # 전처리 코드 테스트
 if __name__ == "__main__":
     train_df, _, _ = utils.get_data()
-    preprocessed_df = swap_sentence(train_df)
+    preprocessed_df = text_style_transfer(train_df)
 
     print('-'*30)
     print("전처리 전", train_df.head(5), sep='\n')
