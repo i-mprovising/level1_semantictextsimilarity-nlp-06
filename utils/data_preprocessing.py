@@ -2,9 +2,6 @@ import pandas as pd
 import utils
 import random
 
-
-from transformers import pipeline
-from googletrans import Translator
 from tqdm.auto import tqdm
 
 # spellceck
