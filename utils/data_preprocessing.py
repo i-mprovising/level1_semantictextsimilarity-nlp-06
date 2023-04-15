@@ -144,7 +144,7 @@ def spellcheck(df):
     return checked_df
 
 def text_style_transfer(df):
-    return pd.read_csv("./data/style_data.csv")
+    return pd.read_csv("./data/cleaned_text_style_transfer.csv")
 
 
 # 전처리 코드 테스트
