@@ -47,6 +47,7 @@ if __name__ == "__main__":
     early_stopping = EarlyStopping(monitor='val_loss', patience=CFG['patience'], mode='min')
 
     # train and test
+    torch.cuda.is_available()
     trainer = pl.Trainer(accelerator='gpu',
                          max_epochs=CFG['train']['epoch'],
                          default_root_dir=save_path,

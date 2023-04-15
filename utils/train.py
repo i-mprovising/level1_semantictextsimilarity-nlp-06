@@ -83,6 +83,19 @@ class Dataloader(pl.LightningDataModule):
     
     def setup(self, stage='fit'):
         if stage == 'fit':
+            uniform_train_df = pd.DataFrame(columns=self.train_df.columns)
+            val_cnt = self.train_df['label'].value_counts()
+            for val in self.train_df['label'].unique():
+                tmp_df = pd.DataFrame(columns=self.train_df.columns)
+                cur_df = self.train_df[self.train_df['label'] == val]
+                cnt = val_cnt[val]
+                if cnt > 516:
+                    tmp_df = cur_df.sample(516)
+                else:
+                    tmp_df = pd.concat([cur_df, cur_df.sample(min(cnt * 3, 516 - cnt), replace=True)])
+                uniform_train_df = pd.concat([uniform_train_df, tmp_df])
+            self.train_df = uniform_train_df
+
             # 학습 데이터 준비
             train_inputs, train_targets = self.preprocessing(self.train_df, train=True)
             
