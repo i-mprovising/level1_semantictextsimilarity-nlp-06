@@ -50,6 +50,9 @@ class Dataloader(pl.LightningDataModule):
         self.text_columns = ['sentence_1', 'sentence_2'] 
         self.cleaning_list = CFG['select_clean']
         self.augmentation_list = CFG['select_DA']
+        self.unifrom_train_data = CFG['train']['unifrom_train_data']
+        self.uniform_max_len = CFG['train']['uniform_max_len']
+        self.uniform_max_duplicate = CFG['train']['uniform_max_duplicate']
 
     def tokenizing(self, df):
         data = []
@@ -83,18 +86,20 @@ class Dataloader(pl.LightningDataModule):
     
     def setup(self, stage='fit'):
         if stage == 'fit':
-            uniform_train_df = pd.DataFrame(columns=self.train_df.columns)
-            val_cnt = self.train_df['label'].value_counts()
-            for val in self.train_df['label'].unique():
-                tmp_df = pd.DataFrame(columns=self.train_df.columns)
-                cur_df = self.train_df[self.train_df['label'] == val]
-                cnt = val_cnt[val]
-                if cnt > 516:
-                    tmp_df = cur_df.sample(516)
-                else:
-                    tmp_df = pd.concat([cur_df, cur_df.sample(min(cnt * 3, 516 - cnt), replace=True)])
-                uniform_train_df = pd.concat([uniform_train_df, tmp_df])
-            self.train_df = uniform_train_df
+            # uniform train data
+            if self.unifrom_train_data:
+                uniform_train_df = pd.DataFrame(columns=self.train_df.columns)
+                val_cnt = self.train_df['label'].value_counts()
+                for val in self.train_df['label'].unique():
+                    tmp_df = pd.DataFrame(columns=self.train_df.columns)
+                    cur_df = self.train_df[self.train_df['label'] == val]
+                    cnt = val_cnt[val]
+                    if cnt > self.uniform_max_len:
+                        tmp_df = cur_df.sample(self.uniform_max_len)
+                    else:
+                        tmp_df = pd.concat([cur_df, cur_df.sample(min(cnt * self.uniform_max_duplicate, self.uniform_max_len - cnt), replace=True)])
+                    uniform_train_df = pd.concat([uniform_train_df, tmp_df])
+                self.train_df = uniform_train_df.reset_index()
 
             # 학습 데이터 준비
             train_inputs, train_targets = self.preprocessing(self.train_df, train=True)
