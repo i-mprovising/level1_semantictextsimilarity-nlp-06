@@ -1,8 +1,9 @@
 admin: KGB # 실험자 이름
+patience: 5
 seed: 42
 train:
-  model_name: beomi/kcbert-base
-  batch_size: 64
+  model_name: snunlp/KR-ELECTRA-discriminator
+  batch_size: 16
   epoch: 100
   LR: 0.00001
   LossF: MSE
@@ -12,4 +13,5 @@ train:
 select_clean:
   - remove_special_word
 select_DA:
-  - random_deletion
+  - swap_sentence
+  # - random_deletion
