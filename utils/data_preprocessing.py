@@ -116,6 +116,27 @@ def spellcheck(df):
     return checked_df
 
 
+def create_5(df):
+    """
+    label이 5인 데이터 생성 (조합 2개)
+    가장 마지막에 사용하는 걸 추천
+
+    1. sentence_1, sentence_1
+    2. sentence_2, sentence_2
+    """
+    sentence_1 = pd.DataFrame()
+    sentence_1['sentence_1'] = df['sentence_1']
+    sentence_1['sentence_2'] = df['sentence_1']
+
+    sentence_2 = pd.DataFrame()
+    sentence_2['sentence_1'] = df['sentence_2']
+    sentence_2['sentence_2'] = df['sentence_2']
+
+    new_df = pd.concat([sentence_1, sentence_2], axis=0)
+    new_df['label'] = 5.0
+
+    return new_df
+
 
 # 전처리 코드 테스트
 if __name__ == "__main__":
