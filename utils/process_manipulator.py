@@ -76,8 +76,15 @@ class SequentialAugmentation:
 # 테스트 코드
 if __name__ == "__main__":
     train_df, _, _ = utils.get_data()
-    sa = SequentialAugmentation(['swap_sentence'])
-    preprocessed_df = sa.process(train_df)
+    sc = SequentialCleaning(['remove_special_word','spellcheck'])
+    sa_bt = SequentialAugmentation(['back_translation'])
+    sa_style = SequentialAugmentation(['text_style_transfer'])
+    cleaned_df = sc.process(train_df)
+    bt = sa_bt.process(cleaned_df)
+    style = sa_style.process(cleaned_df)
+
+    bt.to_csv("./data/bt_cleaned.csv")
+    style.to_csv("./data/style_cleaned.csv")
 
     print('-'*30)
     print("전처리 전", train_df.tail(5), train_df.shape, sep='\n')
