@@ -30,8 +30,8 @@ if __name__ == "__main__":
     wandb_logger = WandbLogger(save_dir=save_path)
     wandb_logger.experiment.config.update(CFG)
 
-    # # --- Fit ---
-    # # load data and model
+    # --- Fit ---
+    # load data and model
     tokenizer = transformers.AutoTokenizer.from_pretrained(CFG['train']['model_name'], max_length=CFG['train']['max_len'])
     dataloader = train.Dataloader(tokenizer, CFG)
     model = Model(CFG)

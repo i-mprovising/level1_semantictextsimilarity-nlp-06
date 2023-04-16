@@ -5,7 +5,7 @@ train:
   model_name: snunlp/KR-ELECTRA-discriminator
   batch_size: 32
   epoch: 100
-  LR: 0.00001
+  LR: 0.000002
   LossF: MSELoss
   optim: AdamW
   LR_scheduler : Lambda
