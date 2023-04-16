@@ -226,7 +226,7 @@ def text_style_transfer(df):
     스타일 변환은 문어체, 구어체 두 가지로 진행되었습니다.
     """
     return pd.read_csv("./data/cleaned_text_style_transfer.csv")
-
+    
 # 전처리 코드 테스트
 if __name__ == "__main__":
     train_df, _, _ = utils.get_data()

@@ -10,6 +10,7 @@ from utils import utils, train
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.callbacks import LearningRateMonitor
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -45,6 +46,7 @@ if __name__ == "__main__":
                                  filename='{epoch}-{val_loss:.2f}',
                                  mode='min')
     early_stopping = EarlyStopping(monitor='val_loss', patience=CFG['patience'], mode='min')
+    lr_monitor = LearningRateMonitor(logging_interval='step')
 
     # train and test
     trainer = pl.Trainer(accelerator='gpu',
@@ -52,7 +54,7 @@ if __name__ == "__main__":
                          default_root_dir=save_path,
                          log_every_n_steps=1,
                          logger = wandb_logger,
-                         callbacks = [checkpoint, early_stopping])
+                         callbacks = [checkpoint, early_stopping, lr_monitor])
     
     trainer.fit(model=model, datamodule=dataloader)
     trainer.test(model=model, datamodule=dataloader)
