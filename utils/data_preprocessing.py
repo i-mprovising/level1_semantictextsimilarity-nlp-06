@@ -41,6 +41,21 @@ def clean_stop(sentence):
   sentence = new_sen
   return sentence
 
+def clean_stop_word(df):
+  """
+  문장의 불용어를 제거하는 data cleaning 기법입니다.
+
+  Args:
+      df (pd.DataFrame): 원본 train data
+
+  Returns:
+      pd.DataFrame
+  """
+  new_df = df.copy()
+  new_df['sentence_1']= new_df['sentence_1'].apply(lambda x : clean_stop(x))
+  new_df['sentence_2']= new_df['sentence_2'].apply(lambda x : clean_stop(x))
+
+  return new_df
 # reverse text
 def reverse(sentence):
   sen_split = sentence.split(" ")
@@ -54,7 +69,7 @@ def reverse(sentence):
   sentence = new_sen
   return sentence
 
-def rev_text(df:pd.DataFrame) -> pd.DataFrame:
+def rev_text(df):
   """
   문장의 어절 단위로 나눠 순서를 반대로 바꾸는 data augmentation 기법입니다.
 
@@ -64,12 +79,13 @@ def rev_text(df:pd.DataFrame) -> pd.DataFrame:
   Returns:
       pd.DataFrame
   """
+  new_df = df.copy()
   # reverse sentence_1
-  df['sentence_1']=df['sentence_1'].apply(lambda x : reverse(x))
+  new_df['sentence_1']=new_df['sentence_1'].apply(lambda x : reverse(x))
   # reverse sentence_2
-  df['sentence_2']=df['sentence_2'].apply(lambda x : reverse(x))
+  new_df['sentence_2']=new_df['sentence_2'].apply(lambda x : reverse(x))
 
-  return df
+  return new_df
 
 
 
@@ -83,7 +99,7 @@ def random_swap(sentence):
   sentence = " ".join(sen_split)
   return sentence
 
-def rand_swap_text(df:pd.DataFrame) -> pd.DataFrame:
+def rand_swap_text(df):
 
   """
   문장의 어절 단위로 나눠 순서를 랜덤하게 바꾸는 data augmentation 기법입니다.
@@ -94,13 +110,13 @@ def rand_swap_text(df:pd.DataFrame) -> pd.DataFrame:
   Returns:
       pd.DataFrame
   """
-
+  new_df = df.copy()
   # reverse sentence_1
-  df['sentence_1']=df['sentence_1'].apply(lambda x : random_swap(x))
+  new_df['sentence_1']=new_df['sentence_1'].apply(lambda x : random_swap(x))
   # reverse sentence_2
-  df['sentence_2']=df['sentence_2'].apply(lambda x : random_swap(x))
+  new_df['sentence_2']=new_df['sentence_2'].apply(lambda x : random_swap(x))
 
-  return df
+  return new_df
 
 
 
@@ -169,49 +185,7 @@ def swap_sentence(df:pd.DataFrame) -> pd.DataFrame:
     return swapped_df
 
 
-# reverse text
-def reverse(sentence):
-  sen_split = sentence.split(" ")
-  length = len(sen_split)
-  new_sen = ""
-  for i in range(length):
-    if(i==length-1):
-      new_sen = new_sen + sen_split[length-1-i]
-      break
-    new_sen = new_sen + sen_split[length-1-i]+" "
-  sentence = new_sen
-  return sentence
 
-# reverse text function
-def rev_text(df:pd.DataFrame) -> pd.DataFrame:
-  
-  # reverse sentence_1
-  df['sentence_1']=df['sentence_1'].apply(lambda x : reverse(x))
-  # reverse sentence_2
-  df['sentence_2']=df['sentence_2'].apply(lambda x : reverse(x))
-
-  return df
-
-
-
-
-# random swap text
-def random_swap(sentence):
-  sen_split = sentence.split(" ")
-  length = len(sen_split)
-  new_sen = ""
-  random.shuffle(sen_split)
-  sentence = " ".join(sen_split)
-  return sentence
-
-# reverse text function
-def rand_swap_text(df:pd.DataFrame) -> pd.DataFrame:
-  # reverse sentence_1
-  df['sentence_1']=df['sentence_1'].apply(lambda x : random_swap(x))
-  # reverse sentence_2
-  df['sentence_2']=df['sentence_2'].apply(lambda x : random_swap(x))
-
-  return df
 
 
 
@@ -366,17 +340,15 @@ def rd(df):
 # 전처리 코드 테스트
 if __name__ == "__main__":
     train_df, _, _ = utils.get_data()
+    
+    clean_text_df = clean_stop_word(train_df)
     preprocessed_df = rand_swap_text(train_df)
-
+    rev_text_df = rev_text(train_df)
     print('-'*30)
-    print("전처리 전", train_df.head(5), sep='\n')
+    print('전,', id(train_df['sentence_1']))
     print('-'*30)
-    print("전처리 후", preprocessed_df.head(5), sep='\n')
-
-    random_deletion_df = random_deletion(train_df)
+    print('후1 : ', id(preprocessed_df['sentence_1']))
     print('-'*30)
-    print('random deletion 전,', train_df.shape)
-    print('random deletion 후,', random_deletion_df.shape)
-    new_df = pd.concat([train_df, random_deletion_df], axis=0)
-    print(new_df.shape)
+    print('후2 : ', id(rev_text_df['sentence_1']))
     print('-'*30)
+    print('후3 : ', id(clean_text_df['sentence_1']))
