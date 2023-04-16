@@ -171,7 +171,6 @@ def ri(df):
 def rs(df):
     """
     문장 내 단어들의 위치를 바꾸는 함수입니다.
-
     필요 라이브러리 :
     pip install koeda
 
@@ -226,7 +225,29 @@ def text_style_transfer(df):
     스타일 변환은 문어체, 구어체 두 가지로 진행되었습니다.
     """
     return pd.read_csv("./data/cleaned_text_style_transfer.csv")
-    
+
+
+def create_5(df):
+    """
+    label이 5인 데이터 생성 (조합 2개)
+    가장 마지막에 사용하는 걸 추천
+
+    1. sentence_1, sentence_1
+    2. sentence_2, sentence_2
+    """
+    sentence_1 = pd.DataFrame()
+    sentence_1['sentence_1'] = df['sentence_1']
+    sentence_1['sentence_2'] = df['sentence_1']
+
+    sentence_2 = pd.DataFrame()
+    sentence_2['sentence_1'] = df['sentence_2']
+    sentence_2['sentence_2'] = df['sentence_2']
+
+    new_df = pd.concat([sentence_1, sentence_2], axis=0)
+    new_df['label'] = 5.0
+
+    return new_df
+
 # 전처리 코드 테스트
 if __name__ == "__main__":
     train_df, _, _ = utils.get_data()
