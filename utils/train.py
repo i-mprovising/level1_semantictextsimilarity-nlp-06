@@ -95,9 +95,9 @@ class Dataloader(pl.LightningDataModule):
                     cur_df = self.train_df[self.train_df['label'] == val]
                     cnt = val_cnt[val]
                     if cnt > self.uniform_max_len:
-                        tmp_df = cur_df.sample(self.uniform_max_len)
+                        tmp_df = cur_df.sample(self.uniform_max_len, random_state=self.seed)
                     else:
-                        tmp_df = pd.concat([cur_df, cur_df.sample(min(cnt * self.uniform_max_duplicate, self.uniform_max_len - cnt), replace=True)])
+                        tmp_df = pd.concat([cur_df, cur_df.sample(min(cnt * self.uniform_max_duplicate, self.uniform_max_len - cnt), replace=True, random_state=self.seed)])
                     uniform_train_df = pd.concat([uniform_train_df, tmp_df])
                 self.train_df = uniform_train_df.reset_index()
 
