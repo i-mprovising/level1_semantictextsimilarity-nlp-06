@@ -35,6 +35,7 @@ class Dataloader(pl.LightningDataModule):
         # 김기범이고 df_split이 True라면 데이터셋을 다시 분리
         if self.admin == 'KGB':
             self.train_df = pd.concat([train_df, val_df], axis=0)
+            self.train_df.reset_index(drop=True, inplace=True)
         else:
             self.train_df = train_df
             self.val_df = val_df
