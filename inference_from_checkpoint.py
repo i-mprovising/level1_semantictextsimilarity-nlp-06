@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     # inference
     # checkpoint의 경로를 붙여넣어주세요.
-    model = Model.load_from_checkpoint('/opt/level1_semantictextsimilarity-nlp-06/results/2023-04-17-00:09:22_UJ/lightning_logs/0m95921w/checkpoints/epoch=11-val_loss=0.32.ckpt')
+    model = Model.load_from_checkpoint('results/2023-04-15-23:09:58_KGB/lightning_logs/o2x4gru7/checkpoints/epoch=20-val_loss=0.07.ckpt')
     predictions = trainer.predict(model=model, datamodule=dataloader)
     pred_y = list(float(i) for i in torch.cat(predictions))
 
