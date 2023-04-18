@@ -244,11 +244,20 @@ def create_5(df):
     change_index = random.sample(label_0_index, 1200)
 
     new_df = df.loc[change_index, :]
+    new_df['sentence_1'] = new_df['sentence_2']
     new_df['label'] = 5.0
     df.drop(change_index, axis=0, inplace=True)
     df.reset_index(drop=True, inplace=True)
 
     return new_df
+
+
+def remove_consonant(df):
+    df['sentence_1'] = df['sentence_1'].str.replace(pat=r'[ㄱ-ㅎㅏ-ㅣ]+', repl=r'', regex=True)
+    df['sentence_2'] = df['sentence_2'].str.replace(pat=r'[ㄱ-ㅎㅏ-ㅣ]+', repl=r'', regex=True)
+
+    return df
+
 
 # 전처리 코드 테스트
 if __name__ == "__main__":
