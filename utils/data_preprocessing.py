@@ -229,22 +229,24 @@ def text_style_transfer(df):
 
 def create_5(df):
     """
-    label이 5인 데이터 생성 (조합 2개)
-    가장 마지막에 사용하는 걸 추천
+    label 0에서 랜덤으로 1200개를 추출해 label 5로 변경해주기
+    sentence_2가 문장 길이 10 정도를 제외하고 sentence_1보다 길기 때문에 정보를 더 많이 담고 있을 것 같아 sentence_2로 label 5 만들기
 
-    1. sentence_1, sentence_1
-    2. sentence_2, sentence_2
+    train_df 기준 label 분포는 >
+    0: 3711
+    1: 1368
+    2: 1137
+    3: 1715
+    4: 1302
+    5: 91
     """
-    sentence_1 = pd.DataFrame()
-    sentence_1['sentence_1'] = df['sentence_1']
-    sentence_1['sentence_2'] = df['sentence_1']
+    label_0_index = label_0_index = df[df['label'] == 0].index.tolist()
+    change_index = random.sample(label_0_index, 1200)
 
-    sentence_2 = pd.DataFrame()
-    sentence_2['sentence_1'] = df['sentence_2']
-    sentence_2['sentence_2'] = df['sentence_2']
-
-    new_df = pd.concat([sentence_1, sentence_2], axis=0)
+    new_df = df.loc[change_index, :]
     new_df['label'] = 5.0
+    df.drop(change_index, axis=0, inplace=True)
+    df.reset_index(drop=True, inplace=True)
 
     return new_df
 

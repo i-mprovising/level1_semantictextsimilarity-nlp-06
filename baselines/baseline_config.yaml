@@ -2,10 +2,10 @@ admin: KGB # 실험자 이름
 patience: 5
 seed: 42
 train:
-  model_name: snunlp/KR-ELECTRA-discriminator
+  model_name: monologg/koelectra-base-v3-discriminator # snunlp/KR-ELECTRA-discriminator
   batch_size: 32
   epoch: 100
-  LR: 0.00001
+  LR: 0.00002
   LossF: MSELoss
   optim: AdamW
   shuffle: True
@@ -14,5 +14,5 @@ select_clean:
   # - remove_special_word
   # - spellcheck
 select_DA:
-  # - swap_sentence
+  - swap_sentence
   # - create_5
