@@ -3,6 +3,10 @@ import torchmetrics
 import transformers
 import pytorch_lightning as pl
 
+# from transformers import ElectraModel
+from transformers import AutoTokenizer, AutoModel
+
+
 class Model(pl.LightningModule):
     def __init__(self, CFG):
         super().__init__()
@@ -14,6 +18,8 @@ class Model(pl.LightningModule):
         optim_name = "torch.optim." + CFG['train']['optim']
         
         # 사용할 모델을 호출
+        # self.plm = transformers.AutoModel.from_pretrained(
+        #     pretrained_model_name_or_path=self.model_name, num_labels=1)
         self.plm = transformers.AutoModelForSequenceClassification.from_pretrained(
             pretrained_model_name_or_path=self.model_name, num_labels=1)
         self.loss_func = eval(loss_name)()
@@ -56,15 +62,20 @@ class Model(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = self.optim(self.parameters(), lr=self.lr)
-        scheduler = torch.optim.lr_scheduler.LambdaLR(
+        # scheduler = torch.optim.lr_scheduler.LambdaLR(
+        #     optimizer=optimizer,
+        #     lr_lambda=lambda epoch: 0.95 ** epoch,
+        #     last_epoch=-1,
+        #     verbose=False)
+        scheduler = torch.optim.lr_scheduler.StepLR(
             optimizer=optimizer,
-            lr_lambda=lambda epoch: 0.95 ** epoch,
-            last_epoch=-1,
-            verbose=False)
+            step_size=10,
+            gamma=0.7,
+            verbose=True)
 
         lr_scheduler = {
         'scheduler': scheduler,
         'name': 'LR_schedule'
         }
 
-        return [optimizer], [lr_scheduler]
+        return [optimizer]#, [lr_scheduler]

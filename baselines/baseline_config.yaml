@@ -1,21 +1,31 @@
 admin: SE # 실험자 이름
-patience: 5
+patience: 3
 seed: 42
 train:
   model_name: snunlp/KR-ELECTRA-discriminator
   batch_size: 32
   epoch: 100
-  LR: 0.000002
-  LossF: MSELoss
+  LR: 0.00001
+  LossF: CosineEmbeddingLoss #MSELoss
   optim: AdamW
-  LR_scheduler : Lambda
+  # LR_scheduler : Step
   shuffle: True
-  max_len: 200
+  max_len: 100
 select_clean:
   - remove_special_word
   # - spellcheck
 select_DA:
   - swap_sentence
-  # - text_style_transfer
-  # - back_translation
+  - text_style_transfer
+  # - create_5
   # - random_deletion
+# sweep:
+#   method: random
+#   parameters:
+#     lr:
+#       distribution: uniform
+#       min: 0.000005
+#       max: 0.0001
+#   metric:
+#     name: val_pearson
+#     goal: maxmize
