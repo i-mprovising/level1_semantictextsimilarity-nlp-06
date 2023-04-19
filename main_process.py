@@ -27,13 +27,12 @@ if __name__ == "__main__":
     pl.seed_everything(CFG['seed'])
 
     # logger 생성
-    wandb.init(name=folder_name, project="STS", entity="boostcamp_nlp_06")
+    wandb.init(name=folder_name, project="level1-STS", entity="gibum1228")
     wandb_logger = WandbLogger(save_dir=save_path)
     wandb_logger.experiment.config.update(CFG)
 
     # --- Fit ---
     # load data and model
-    # tokenizer = AutoTokenizer.from_pretrained(CFG['train']['model_name'])#, model_max_length=CFG['train']['max_len'])
     tokenizer = transformers.AutoTokenizer.from_pretrained(CFG['train']['model_name'], model_max_length=CFG['train']['max_len'])
     dataloader = train.Dataloader(tokenizer, CFG)
     model = Model(CFG)
@@ -41,30 +40,31 @@ if __name__ == "__main__":
     # set options
     # Earlystopping
     checkpoint = ModelCheckpoint(monitor='val_loss',
-                                 save_top_k=3,
-                                 save_last=True,
-                                 save_weights_only=True,
-                                 verbose=False,
-                                 filename='{epoch}-{val_loss:.2f}',
-                                 mode='min')
+                                save_top_k=3,
+                                save_last=True,
+                                save_weights_only=True,
+                                verbose=False,
+                                filename='{epoch}-{val_loss:.2f}',
+                                mode='min')
     early_stopping = EarlyStopping(monitor='val_loss', patience=CFG['patience'], mode='min')
     # lr_monitor = LearningRateMonitor(logging_interval='step')
 
     # train and test
     trainer = pl.Trainer(accelerator='gpu',
-                         max_epochs=CFG['train']['epoch'],
-                         default_root_dir=save_path,
-                         log_every_n_steps=1,
-                         logger = wandb_logger,
-                         callbacks = [checkpoint, early_stopping])
-    
+                        max_epochs=CFG['train']['epoch'],
+                        default_root_dir=save_path,
+                        log_every_n_steps=1,
+                        logger = wandb_logger,
+                        callbacks = [checkpoint, early_stopping])
+            
     trainer.fit(model=model, datamodule=dataloader)
     trainer.test(model=model, datamodule=dataloader)
 
     # inference
-    # model = torch.load('results/2023-04-15-03:07:18_KGB/2023-04-15-03:07:18_model.pt')
+    # best_check_point = utils.get_best_check_point(save_path) # 베스트 체크포인트로 모델 가져오기
+    # model = Model.load_from_checkpoint(best_check_point)
     predictions = trainer.predict(model=model, datamodule=dataloader)
-    pred_y = list(round(float(i), 1) for i in torch.cat(predictions))
+    pred_y = list(float(i) for i in torch.cat(predictions))
 
     # --- save ---
     # write yaml
