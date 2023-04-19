@@ -1,8 +1,10 @@
 import pandas as pd
 import utils
 import random
+import re
 
 from tqdm.auto import tqdm
+from hangulize import hangulize
 
 # spellceck
 from pykospacing import Spacing
@@ -224,20 +226,47 @@ def text_style_transfer(df):
     remove_special_word, spellcheck를 진행한 train.csv에 text_style_transfer를 진행한 csv를 불러옵니다.
     스타일 변환은 문어체, 구어체 두 가지로 진행되었습니다.
     """
-    # return pd.read_csv("./data/cleaned_text_style_transfer.csv")
-    # return pd.read_csv("./data/style_data.csv")
-    ts = pd.read_csv("./data/train_spoken.csv")
-    wt = pd.read_csv("./data/written_train.csv")
-    tw = pd.read_csv("./data/train_written.csv")
-    st = pd.read_csv("./data/spoken_train.csv")
-    new_df = pd.concat([ts, wt, tw, st])
-    return new_df
+    """
+    text style을 세 가지로 바꾸는 augmentation. 
+
+    Args:
+        df (pd.DataFrame): 원본 train data
+    Returns:
+        pd.DataFrame    
+    """
+    model = pipeline(
+    'text2text-generation',
+    model='heegyu/kobart-text-style-transfer'
+    )
+    styles = ['문어체','구어체']
+    
+    def get_transferred_text(text, target_style, **kwargs):
+      input = f"{target_style} 말투로 변환:{text}"
+      out = model(input, max_length=64, **kwargs)
+      return out[0]['generated_text']
+    
+    sen1 = []
+    sen2 = []
+    spoken = df.copy()
+    for i in tqdm(range(len(df))):
+        item = df.iloc[i]
+        sen2.append(get_transferred_text(item['sentence_2'], style[0])) #sentence2를 구어체로 변환
+    spoken['sentence_2'] = sen2
+    written = df.copy()
+    for i in tqdm(range(len(df))):
+        item = df.iloc[i]
+        sen1.append(get_transferred_text(item['sentence_1'], style[1])) #sentence1을 문어체로 변환
+    written['sentence_1'] = sen1
+
+    new_df = pd.concat([spoken, written])
+    return new_df #ts+wt
+
+    # ts = pd.read_csv("./data/train_spoken.csv")
+    # wt = pd.read_csv("./data/written_train.csv")
+    # tw = pd.read_csv("./def text_style_transfer(df)
     # st = pd.read_csv("./data/spoken_train.csv")
-    # tw = pd.read_csv("./data/train_written.csv")
-    # new_df = pd.concat([ts, wt])
+    # new_df = pd.concat([ts, wt, tw, st])
     # return new_df
-
-
 
 def create_5(df):
     """
@@ -285,6 +314,25 @@ def create_5_1(df):
     df.drop(change_index, axis=0, inplace=True)
     df.reset_index(drop=True, inplace=True)
 
+    return new_df
+
+def process_eng(df):
+    new_df = df.copy()
+    reg = re.compile(r'[a-zA-Z]')
+    sen1 = []
+    sen2 = []
+    for idx, row in df.iterrows():
+        if(reg.match(row['sentence_1']) or reg.match(row['sentence_2'])):
+            han_1 = hangulize(row['sentence_1'], 'cym')
+            han_2 = hangulize(row['sentence_2'], 'cym')
+            sen1.append(han_1)
+            sen2.append(han_2)
+        else:
+            sen1.append(row['sentence_1'])
+            sen2.append(row['sentence_2'])
+    new_df['sentence_1'] = sen1
+    new_df['sentence_2'] = sen2
+    
     return new_df
 
 
