@@ -27,7 +27,7 @@ if __name__ == "__main__":
     pl.seed_everything(CFG['seed'])
 
     # logger 생성
-    wandb.init(name=folder_name, project="level1-STS", entity="gibum1228")
+    wandb.init(name=folder_name, project="STS", entity="boostcamp_nlp_06")
     wandb_logger = WandbLogger(save_dir=save_path)
     wandb_logger.experiment.config.update(CFG)
 
@@ -55,7 +55,7 @@ if __name__ == "__main__":
                         default_root_dir=save_path,
                         log_every_n_steps=1,
                         logger = wandb_logger,
-                        callbacks = [checkpoint, early_stopping])
+                        callbacks = [checkpoint, early_stopping]) #lr_monitor
             
     trainer.fit(model=model, datamodule=dataloader)
     trainer.test(model=model, datamodule=dataloader)

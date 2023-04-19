@@ -1,5 +1,5 @@
 admin: SE # 실험자 이름
-patience: 3
+patience: 5
 seed: 42
 train:
   model_name: snunlp/KR-ELECTRA-discriminator
@@ -10,11 +10,11 @@ train:
   optim: AdamW
   # LR_scheduler : Step
   shuffle: True
-  max_len: 120
+  max_len: 140
 select_clean:
-  - remove_special_word
-  - convert_eng
+  # - remove_special_word
+  - process_eng
 select_DA:
+  - create_5_1
   - swap_sentence
-  - create_5
   # - random_deletion
