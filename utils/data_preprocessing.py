@@ -240,8 +240,8 @@ def create_5(df):
     4: 1302
     5: 91
     """
-    label_0_index = label_0_index = df[df['label'] == 0].index.tolist()
-    change_index = random.sample(label_0_index, 1200)
+    label_0_index = label_0_index = df[df['label'] == 0.0].index.tolist()
+    change_index = random.sample(label_0_index, 400) # 원래 1200
 
     new_df = df.loc[change_index, :]
     new_df['sentence_1'] = new_df['sentence_2']
@@ -264,8 +264,8 @@ def create_5_1(df):
     4: 1302
     5: 91
     """
-    label_0_index = label_0_index = df[df['label'] == 0].index.tolist()
-    change_index = random.sample(label_0_index, 1200)
+    label_0_index = label_0_index = df[df['label'] == 0.0].index.tolist()
+    change_index = random.sample(label_0_index, 400) # 원래 1200
 
     new_df = df.loc[change_index, :]
     new_df['sentence_2'] = new_df['sentence_1']
@@ -274,6 +274,36 @@ def create_5_1(df):
     df.reset_index(drop=True, inplace=True)
 
     return new_df
+
+
+def create_5_mix(df):
+    """
+    label 0에서 랜덤으로 1200개를 추출해 sentence_1, sentence_2를 반반으로 label 5로 변경해주기
+
+    train_df 기준 label 분포는 >
+    0: 3711
+    1: 1368
+    2: 1137
+    3: 1715
+    4: 1302
+    5: 91
+    """
+    new_df = []
+    for _ in range(2):
+        label_0_index = label_0_index = df[df['label'] == 0.0].index.tolist()
+        change_index = random.sample(label_0_index, 400) # 원래 1200
+        focus_df = df.loc[change_index, :]
+        if _ == 0:
+            focus_df['sentence_2'] = focus_df['sentence_1']
+        else:
+            focus_df['sentence_1'] = focus_df['sentence_2']
+        focus_df['label'] = 5.0
+        df.drop(change_index, axis=0, inplace=True)
+        df.reset_index(drop=True, inplace=True)
+
+        new_df.append(focus_df)
+
+    return pd.concat([new_df[0], new_df[1]], axis=0)
 
 
 def remove_consonant(df):
