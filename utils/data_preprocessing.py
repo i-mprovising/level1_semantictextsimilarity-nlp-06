@@ -224,7 +224,19 @@ def text_style_transfer(df):
     remove_special_word, spellcheck를 진행한 train.csv에 text_style_transfer를 진행한 csv를 불러옵니다.
     스타일 변환은 문어체, 구어체 두 가지로 진행되었습니다.
     """
-    return pd.read_csv("./data/cleaned_text_style_transfer.csv")
+    # return pd.read_csv("./data/cleaned_text_style_transfer.csv")
+    # return pd.read_csv("./data/style_data.csv")
+    ts = pd.read_csv("./data/train_spoken.csv")
+    wt = pd.read_csv("./data/written_train.csv")
+    tw = pd.read_csv("./data/train_written.csv")
+    st = pd.read_csv("./data/spoken_train.csv")
+    new_df = pd.concat([ts, wt, tw, st])
+    return new_df
+    # st = pd.read_csv("./data/spoken_train.csv")
+    # tw = pd.read_csv("./data/train_written.csv")
+    # new_df = pd.concat([ts, wt])
+    # return new_df
+
 
 
 def create_5(df):
@@ -251,17 +263,10 @@ def create_5(df):
 # 전처리 코드 테스트
 if __name__ == "__main__":
     train_df, _, _ = utils.get_data()
-    preprocessed_df = swap_sentence(train_df, "RD", 0.5)
+    preprocessed_df = text_style_transfer(train_df)
 
     print('-'*30)
     print("전처리 전", train_df.head(5), sep='\n')
     print('-'*30)
     print("전처리 후", preprocessed_df.head(5), sep='\n')
-
-    random_deletion_df = random_deletion(train_df)
-    print('-'*30)
-    print('random deletion 전,', train_df.shape)
-    print('random deletion 후,', random_deletion_df.shape)
-    new_df = pd.concat([train_df, random_deletion_df], axis=0)
-    print(new_df.shape)
-    print('-'*30)
+    print(len(train_df), len(preprocessed_df))

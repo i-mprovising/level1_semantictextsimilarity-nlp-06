@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from tqdm.auto import tqdm
 from torch.utils.data import Dataset, DataLoader
 from utils.process_manipulator import SequentialCleaning as SC, SequentialAugmentation as SA
+from sentence_transformers import SentenceTransformer
 
 class Dataset(Dataset):
     def __init__(self, inputs, targets=[]):
@@ -51,14 +52,24 @@ class Dataloader(pl.LightningDataModule):
         self.cleaning_list = CFG['select_clean']
         self.augmentation_list = CFG['select_DA']
 
+    def mean_pooling(model_output, attention_mask):
+        token_embeddings = model_output[0] #First element of model_output contains all token embeddings
+        input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+        return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+
     def tokenizing(self, df):
         data = []
 
         for idx, item in tqdm(df.iterrows(), desc='tokenizing', total=len(df)):
             # 두 입력 문장을 [SEP] 토큰으로 이어붙여서 전처리
             text = '[SEP]'.join([item[text_column] for text_column in self.text_columns])
-            outputs = self.tokenizer(text, add_special_tokens=True, padding='max_length', truncation=True)
+            outputs = self.tokenizer(text)#, add_special_tokens=True, padding='max_length', truncation=True)#, return_tensors="pt")
             data.append(outputs['input_ids'])
+
+            # model = SentenceTransformer('snunlp/KR-SBERT-V40K-klueNLI-augSTS')
+            # embeddings = model.encode(text)
+            # print(embeddings)
+            # data.append(embeddings)
         
         return data
 
