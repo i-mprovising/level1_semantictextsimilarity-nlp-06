@@ -13,19 +13,6 @@ train:
   max_len: 100
 select_clean:
   - remove_special_word
-  # - spellcheck
 select_DA:
   - swap_sentence
-  - text_style_transfer
-  # - create_5
   # - random_deletion
-# sweep:
-#   method: random
-#   parameters:
-#     lr:
-#       distribution: uniform
-#       min: 0.000005
-#       max: 0.0001
-#   metric:
-#     name: val_pearson
-#     goal: maxmize
