@@ -25,7 +25,7 @@ if __name__ == "__main__":
     pl.seed_everything(CFG['seed'])
 
     # logger 생성
-    wandb.init(name=folder_name, project="STS", entity="boostcamp_nlp_06")
+    wandb.init(name=folder_name, project="level1-STS", entity="gibum1228")
     wandb_logger = WandbLogger(save_dir=save_path)
     wandb_logger.experiment.config.update(CFG)
 
@@ -58,8 +58,8 @@ if __name__ == "__main__":
     trainer.test(model=model, datamodule=dataloader)
 
     # inference
-    best_check_point = utils.get_best_check_point(save_path)
-    model = Model.load_from_checkpoint(best_check_point)
+    # best_check_point = utils.get_best_check_point(save_path) # 베스트 체크포인트로 모델 가져오기
+    # model = Model.load_from_checkpoint(best_check_point)
     predictions = trainer.predict(model=model, datamodule=dataloader)
     pred_y = list(float(i) for i in torch.cat(predictions))
 
