@@ -240,8 +240,8 @@ def create_5(df):
     4: 1302
     5: 91
     """
-    label_0_index = label_0_index = df[df['label'] == 0].index.tolist()
-    change_index = random.sample(label_0_index, 1200)
+    label_0_index = label_0_index = df[df['label'] == 0.0].index.tolist()
+    change_index = random.sample(label_0_index, 400) # 원래 1200
 
     new_df = df.loc[change_index, :]
     new_df['sentence_1'] = new_df['sentence_2']
@@ -264,8 +264,8 @@ def create_5_1(df):
     4: 1302
     5: 91
     """
-    label_0_index = label_0_index = df[df['label'] == 0].index.tolist()
-    change_index = random.sample(label_0_index, 1200)
+    label_0_index = label_0_index = df[df['label'] == 0.0].index.tolist()
+    change_index = random.sample(label_0_index, 400) # 원래 1200
 
     new_df = df.loc[change_index, :]
     new_df['sentence_2'] = new_df['sentence_1']
@@ -290,8 +290,8 @@ def create_5_mix(df):
     """
     new_df = []
     for _ in range(2):
-        label_0_index = label_0_index = df[df['label'] == 0].index.tolist()
-        change_index = random.sample(label_0_index, 1200)
+        label_0_index = label_0_index = df[df['label'] == 0.0].index.tolist()
+        change_index = random.sample(label_0_index, 400) # 원래 1200
         focus_df = df.loc[change_index, :]
         if _ == 0:
             focus_df['sentence_2'] = focus_df['sentence_1']
