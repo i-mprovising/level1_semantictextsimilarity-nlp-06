@@ -1,8 +1,11 @@
 import pandas as pd
 import utils
 import random
+import re
 
 from tqdm.auto import tqdm
+from hangulize import hangulize
+from transformers import pipeline
 
 # spellceck
 from pykospacing import Spacing
@@ -224,8 +227,48 @@ def text_style_transfer(df):
     remove_special_word, spellcheck를 진행한 train.csv에 text_style_transfer를 진행한 csv를 불러옵니다.
     스타일 변환은 문어체, 구어체 두 가지로 진행되었습니다.
     """
-    return pd.read_csv("./data/cleaned_text_style_transfer.csv")
+    """
+    text style을 세 가지로 바꾸는 augmentation. 
 
+    Args:
+        df (pd.DataFrame): 원본 train data
+    Returns:
+        pd.DataFrame    
+    """
+    """
+    model = pipeline(
+        'text2text-generation',
+        model='heegyu/kobart-text-style-transfer'
+    )
+    styles = ['문어체','구어체']
+    
+    def get_transferred_text(text, target_style, **kwargs):
+      input = f"{target_style} 말투로 변환:{text}"
+      out = model(input, max_length=64, **kwargs)
+      return out[0]['generated_text']
+    
+    sen1 = []
+    sen2 = []
+    spoken = df.copy()
+    for i in tqdm(range(len(df))):
+        item = df.iloc[i]
+        sen2.append(get_transferred_text(item['sentence_2'], styles[0])) #sentence2를 구어체로 변환
+    spoken['sentence_2'] = sen2
+    written = df.copy()
+    for i in tqdm(range(len(df))):
+        item = df.iloc[i]
+        sen1.append(get_transferred_text(item['sentence_1'], styles[1])) #sentence1을 문어체로 변환
+    written['sentence_1'] = sen1
+
+    new_df = pd.concat([spoken, written])
+    return new_df #ts+wt
+    """
+    ts = pd.read_csv("./data/train_spoken.csv")
+    wt = pd.read_csv("./data/written_train.csv")
+    # tw = pd.read_csv("./def text_style_transfer(df)
+    # st = pd.read_csv("./data/spoken_train.csv")
+    new_df = pd.concat([ts, wt])
+    return new_df
 
 def create_5(df):
     """
@@ -265,7 +308,7 @@ def create_5_1(df):
     5: 91
     """
     label_0_index = label_0_index = df[df['label'] == 0.0].index.tolist()
-    change_index = random.sample(label_0_index, 400) # 원래 1200
+    change_index = random.sample(label_0_index, 600) # 원래 1200
 
     new_df = df.loc[change_index, :]
     new_df['sentence_2'] = new_df['sentence_1']
@@ -273,6 +316,26 @@ def create_5_1(df):
     df.drop(change_index, axis=0, inplace=True)
     df.reset_index(drop=True, inplace=True)
 
+    return new_df
+
+def process_eng(df):
+    # 영어단어를 한글 발음으로 바꿈.
+    new_df = df.copy()
+    reg = re.compile(r'[a-zA-Z]')
+    sen1 = []
+    sen2 = []
+    for idx, row in df.iterrows():
+        if(reg.match(row['sentence_1']) or reg.match(row['sentence_2'])):
+            han_1 = hangulize(row['sentence_1'], 'cym')
+            han_2 = hangulize(row['sentence_2'], 'cym')
+            sen1.append(han_1)
+            sen2.append(han_2)
+        else:
+            sen1.append(row['sentence_1'])
+            sen2.append(row['sentence_2'])
+    new_df['sentence_1'] = sen1
+    new_df['sentence_2'] = sen2
+    
     return new_df
 
 
@@ -316,17 +379,10 @@ def remove_consonant(df):
 # 전처리 코드 테스트
 if __name__ == "__main__":
     train_df, _, _ = utils.get_data()
-    preprocessed_df = swap_sentence(train_df, "RD", 0.5)
+    preprocessed_df = text_style_transfer(train_df)
 
     print('-'*30)
     print("전처리 전", train_df.head(5), sep='\n')
     print('-'*30)
     print("전처리 후", preprocessed_df.head(5), sep='\n')
-
-    random_deletion_df = random_deletion(train_df)
-    print('-'*30)
-    print('random deletion 전,', train_df.shape)
-    print('random deletion 후,', random_deletion_df.shape)
-    new_df = pd.concat([train_df, random_deletion_df], axis=0)
-    print(new_df.shape)
-    print('-'*30)
+    print(len(train_df), len(preprocessed_df))
