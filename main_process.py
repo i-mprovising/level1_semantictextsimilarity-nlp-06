@@ -68,7 +68,7 @@ if __name__ == "__main__":
     with open(f'{save_path}/{folder_name}_config.yaml', 'w') as f:
         yaml.dump(CFG, f)
     # save mode
-    torch.save(model, f'{save_path}/{folder_name}_model.pt')
+    # torch.save(model, f'{save_path}/{folder_name}_model.pt')
     # save submit
     submit = pd.read_csv('./data/sample_submission.csv')
     submit['target'] = pred_y

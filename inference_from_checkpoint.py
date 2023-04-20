@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     # # --- Fit ---
     # # load data and model
-    tokenizer = transformers.AutoTokenizer.from_pretrained(CFG['train']['model_name'], max_length=CFG['train']['max_len'])
+    tokenizer = transformers.AutoTokenizer.from_pretrained(CFG['train']['model_name'], model_max_length=CFG['train']['max_len'])
     dataloader = train.Dataloader(tokenizer, CFG)
 
     # train and test
@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     # inference
     # checkpoint의 경로를 붙여넣어주세요.
-    model = Model.load_from_checkpoint('results/2023-04-15-23:09:58_KGB/lightning_logs/o2x4gru7/checkpoints/epoch=20-val_loss=0.07.ckpt')
+    model = Model.load_from_checkpoint('results/2023-04-19-09:44:16_KGB/lightning_logs/jlfdzr0l/checkpoints/last.ckpt')
     predictions = trainer.predict(model=model, datamodule=dataloader)
     pred_y = list(float(i) for i in torch.cat(predictions))
 
