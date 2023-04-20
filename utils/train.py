@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from tqdm.auto import tqdm
 from torch.utils.data import Dataset, DataLoader
 from utils.process_manipulator import SequentialCleaning as SC, SequentialAugmentation as SA
+from sentence_transformers import SentenceTransformer
 
 class Dataset(Dataset):
     def __init__(self, inputs, targets=[]):
