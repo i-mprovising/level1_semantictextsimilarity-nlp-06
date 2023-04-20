@@ -1,20 +1,20 @@
-admin: SE # 실험자 이름
+admin: KGB # 실험자 이름
 patience: 5
 seed: 42
 train:
-  model_name: snunlp/KR-ELECTRA-discriminator
+  model_name: monologg/koelectra-base-v3-discriminator # snunlp/KR-ELECTRA-discriminator
   batch_size: 32
   epoch: 100
-  LR: 0.00001
-  LossF: MSELoss #CosineEmbeddingLoss
+  LR: 0.00002
+  LossF: MSELoss # CosineEmbeddingLoss
   optim: AdamW
   # LR_scheduler : Step
   shuffle: True
   max_len: 100
 select_clean:
   # - remove_consonant
-  - remove_special_word
-  - spellcheck
+  # - remove_special_word
+  # - spellcheck
   - process_eng
 select_DA:
   - create_5
