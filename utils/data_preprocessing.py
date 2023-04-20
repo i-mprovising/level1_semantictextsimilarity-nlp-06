@@ -5,6 +5,7 @@ import re
 
 from tqdm.auto import tqdm
 from hangulize import hangulize
+from transformers import pipeline
 
 # spellceck
 from pykospacing import Spacing
@@ -234,9 +235,10 @@ def text_style_transfer(df):
     Returns:
         pd.DataFrame    
     """
+    """
     model = pipeline(
-    'text2text-generation',
-    model='heegyu/kobart-text-style-transfer'
+        'text2text-generation',
+        model='heegyu/kobart-text-style-transfer'
     )
     styles = ['문어체','구어체']
     
@@ -250,23 +252,23 @@ def text_style_transfer(df):
     spoken = df.copy()
     for i in tqdm(range(len(df))):
         item = df.iloc[i]
-        sen2.append(get_transferred_text(item['sentence_2'], style[0])) #sentence2를 구어체로 변환
+        sen2.append(get_transferred_text(item['sentence_2'], styles[0])) #sentence2를 구어체로 변환
     spoken['sentence_2'] = sen2
     written = df.copy()
     for i in tqdm(range(len(df))):
         item = df.iloc[i]
-        sen1.append(get_transferred_text(item['sentence_1'], style[1])) #sentence1을 문어체로 변환
+        sen1.append(get_transferred_text(item['sentence_1'], styles[1])) #sentence1을 문어체로 변환
     written['sentence_1'] = sen1
 
     new_df = pd.concat([spoken, written])
     return new_df #ts+wt
-
-    # ts = pd.read_csv("./data/train_spoken.csv")
-    # wt = pd.read_csv("./data/written_train.csv")
+    """
+    ts = pd.read_csv("./data/train_spoken.csv")
+    wt = pd.read_csv("./data/written_train.csv")
     # tw = pd.read_csv("./def text_style_transfer(df)
     # st = pd.read_csv("./data/spoken_train.csv")
-    # new_df = pd.concat([ts, wt, tw, st])
-    # return new_df
+    new_df = pd.concat([ts, wt])
+    return new_df
 
 def create_5(df):
     """
@@ -306,7 +308,7 @@ def create_5_1(df):
     5: 91
     """
     label_0_index = label_0_index = df[df['label'] == 0.0].index.tolist()
-    change_index = random.sample(label_0_index, 400) # 원래 1200
+    change_index = random.sample(label_0_index, 600) # 원래 1200
 
     new_df = df.loc[change_index, :]
     new_df['sentence_2'] = new_df['sentence_1']
@@ -317,6 +319,7 @@ def create_5_1(df):
     return new_df
 
 def process_eng(df):
+    # 영어단어를 한글 발음으로 바꿈.
     new_df = df.copy()
     reg = re.compile(r'[a-zA-Z]')
     sen1 = []
