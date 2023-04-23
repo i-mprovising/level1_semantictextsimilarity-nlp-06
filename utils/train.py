@@ -8,7 +8,6 @@ from sklearn.model_selection import train_test_split
 from tqdm.auto import tqdm
 from torch.utils.data import Dataset, DataLoader
 from utils.process_manipulator import SequentialCleaning as SC, SequentialAugmentation as SA
-from sentence_transformers import SentenceTransformer
 
 class Dataset(Dataset):
     def __init__(self, inputs, targets=[]):
@@ -52,7 +51,7 @@ class Dataloader(pl.LightningDataModule):
         self.text_columns = ['sentence_1', 'sentence_2'] 
         self.cleaning_list = CFG['select_clean']
         self.augmentation_list = CFG['select_DA']
-        self.unifrom_train_data = CFG['train']['unifrom_train_data']
+        self.uniform_train_data = CFG['train']['uniform_train_data']
         self.uniform_max_len = CFG['train']['uniform_max_len']
         self.uniform_max_duplicate = CFG['train']['uniform_max_duplicate']
 
@@ -89,7 +88,7 @@ class Dataloader(pl.LightningDataModule):
     def setup(self, stage='fit'):
         if stage == 'fit':
             # uniform train data
-            if self.unifrom_train_data:
+            if self.uniform_train_data:
                 uniform_train_df = pd.DataFrame(columns=self.train_df.columns)
                 val_cnt = self.train_df['label'].value_counts()
                 for val in self.train_df['label'].unique():
