@@ -6,8 +6,9 @@ train:
   batch_size: 32
   epoch: 100
   LR: 0.00001
-  LossF: MSELoss
+  LossF: MSELoss #CosineEmbeddingLoss
   optim: AdamW
+  # LR_scheduler : Step
   shuffle: True
   max_len: 200
   unifrom_train_data: True  # train data를 uniform하게 만들고 싶다면 True
