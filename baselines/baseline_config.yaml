@@ -1,4 +1,4 @@
-admin: SE # 실험자 이름
+admin: UJ # 실험자 이름
 patience: 5
 seed: 42
 train:
@@ -10,11 +10,11 @@ train:
   optim: AdamW
   # LR_scheduler : Step
   shuffle: True
-  max_len: 140
+  max_len: 200
+  unifrom_train_data: True  # train data를 uniform하게 만들고 싶다면 True
+  uniform_max_len: 516  # train data에서 이 숫자를 초과하는 레이블은 undersampling, 미만인 레이블은 oversampling됩니다.
+  uniform_max_duplicate: 3 # oversampling시 특정 데이터에 과적합되는걸 방지하기 위해서 이 숫자 이상 데이터를 복제하지 않습니다.
 select_clean:
-  # - remove_special_word
-  - process_eng
+  - spellcheck
 select_DA:
-  - create_5_1
   - swap_sentence
-  # - random_deletion
