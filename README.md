@@ -62,8 +62,8 @@
 │   │   └── data_preprocessing.py
 │   ├── baselines/
 │   │   ├── baseline_config.yml
-│   │   ├── baseline_inference.py
-│   │   └── baseline_train.py
+│   │   ├── baseline_inference.py (private)
+│   │   └── baseline_train.py (private)
 │   ├── requirements.txt
 │   ├── READMD.md
 │   └── main_process.py
