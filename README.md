@@ -7,6 +7,7 @@
 
 - 주제: 부스트캠프 5기 Level 1 프로젝트 - 문장 간 유사도 측정
 - 프로젝트 기간: 2023년 4월 10일 ~ 2023년 4월 20일
+- 결과: Public: 5위, Private: 10위
 
 # 2. 팀원
 
@@ -50,12 +51,13 @@
 ```bash
 ├── level1_semantictextsimilarity-nlp-06
 │   ├── data/ (private)
+│   ├── results/ (private)
 │   ├── data_viz/
-│   ├── results/
 │   ├── models/
 │   │   └── model.py
 │   ├── utils/
 │   │   ├── train.py
+│   │   ├── process_manipulator.py
 │   │   ├── utils.py
 │   │   └── data_preprocessing.py
 │   ├── baselines/

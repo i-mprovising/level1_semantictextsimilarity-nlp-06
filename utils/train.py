@@ -8,7 +8,6 @@ from sklearn.model_selection import train_test_split
 from tqdm.auto import tqdm
 from torch.utils.data import Dataset, DataLoader
 from utils.process_manipulator import SequentialCleaning as SC, SequentialAugmentation as SA
-from sentence_transformers import SentenceTransformer
 
 class Dataset(Dataset):
     def __init__(self, inputs, targets=[]):
@@ -52,6 +51,9 @@ class Dataloader(pl.LightningDataModule):
         self.text_columns = ['sentence_1', 'sentence_2'] 
         self.cleaning_list = CFG['select_clean']
         self.augmentation_list = CFG['select_DA']
+        self.uniform_train_data = CFG['train']['uniform_train_data']
+        self.uniform_max_len = CFG['train']['uniform_max_len']
+        self.uniform_max_duplicate = CFG['train']['uniform_max_duplicate']
 
     def tokenizing(self, df):
         data = []
@@ -85,6 +87,21 @@ class Dataloader(pl.LightningDataModule):
     
     def setup(self, stage='fit'):
         if stage == 'fit':
+            # uniform train data
+            if self.uniform_train_data:
+                uniform_train_df = pd.DataFrame(columns=self.train_df.columns)
+                val_cnt = self.train_df['label'].value_counts()
+                for val in self.train_df['label'].unique():
+                    tmp_df = pd.DataFrame(columns=self.train_df.columns)
+                    cur_df = self.train_df[self.train_df['label'] == val]
+                    cnt = val_cnt[val]
+                    if cnt > self.uniform_max_len:
+                        tmp_df = cur_df.sample(self.uniform_max_len, random_state=self.seed)
+                    else:
+                        tmp_df = pd.concat([cur_df, cur_df.sample(min(cnt * self.uniform_max_duplicate, self.uniform_max_len - cnt), replace=True, random_state=self.seed)])
+                    uniform_train_df = pd.concat([uniform_train_df, tmp_df])
+                self.train_df = uniform_train_df.reset_index()
+
             # 학습 데이터 준비
             train_inputs, train_targets = self.preprocessing(self.train_df, train=True)
             
