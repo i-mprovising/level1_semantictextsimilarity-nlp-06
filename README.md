@@ -80,6 +80,33 @@
 
 # 4. 시각화
 
+주어진 데이터의 특징을 파악하기 위해 EDA를 수행해봤다.
+
+## 4.1 label별 데이터 분포
+
+validation data의 분포는 uniform에 가까운데 비해 train data의 분포는 편향되어 있다. 특히 label 0.0의 데이터가 압도적으로 많다.
+
+## 4.1.1 Train Data
+
+<img src='./images/train_label.png' />
+
+## 4.1.2 Validation Data
+
+<img src='./images/val_label.png' />
+
+## 4.2 Token 개수
+
+<img src='./images/tokenizer_count.png' />
+
+sentence1 + sentence2의 token 개수를 히스토그램으로 확인 했을 때 대부분 토큰 개수가 100개 이하였고, 가장 긴 문장의 토큰 개수는 169개였다. 특수문자는 토큰 하나로 변환되는데, ! 등의 문장 부호가 반복되는 경우 문장의 토큰 개수가 많아졌다. 특수문자를 제거할 경우 token 개수를 최대 100개 정도로 크게 줄일 수 있었다. 이로 인해 학습 속도가 훨씬 빨라지는 효과를 얻을 수 있었다.<br>
+model max length가 충분하지 않을 경우, sentence2의 token만 손실 되어 두 문장 사이의 유사도가 변질된다고 판단하여 model max length는 100 이상으로 선정했다.
+
+## 4.3 Source별 label 분포
+
+<img src='./images/source_label.png' />
+
+train data의 source 별 label 분포. sampled data는 positive skewness를 보이고 rtt data는 negative skewness를 보인다.
+
 # 5. 사용한 전처리 기법
 
 데이터 전처리는 12개의 기법을 사용했는데 두 가지 카테고리인 데이터 클리닝과 데이터 증강으로 분류했다. 분류 기준은 다음과 같다. 원본 데이터를 변환시키는 전처리 기법은 `데이터 클리닝`이라고 하며, 원본 데이터를 유지한 채 새로운 데이터를 만들어내면 `데이터 증강`으로 카테고리를 지정했다.
@@ -94,7 +121,7 @@
 
 `hangulize`는 'OPIC'을 '오픽'으로 변환해주는 등 영어를 한글 발음으로 바꿔주는 라이브러리이다.
 
-<img src='./images/hangulize.png' width='300px' height='150px' />
+<img src='./images/hangulize.png'/>
 
 모델이 예측한 validation data의 label과 실제 정답 값을 비교했을 때 영어 단어가 한글로 되어서 실제 정답 점수는 높은데 모델이 label을 낮게 주는 경우가 다소 있었다. 이에 우리는 모델이 두 단어를 서로 다른 단어로 인식하여 낮은 점수를 주었다고 가정하여, 외래어 단어를 한글 발음으로 바꿔주는 `hangulize` 라이브러리를 통해 데이터를 클리닝했다.
 
