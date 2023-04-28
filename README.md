@@ -196,7 +196,7 @@ SMOTE는 정형 데이터에서 사용하는 데이터 증강 기법으로 imbal
 |5|snunlp/KR-ELECTRA-discriminator|0.9292|1e-5|32|swap|none| |0.9217|MSE| |
 |6|monologg/koelectra-base-v3-discriminator|0.9223|2e-5|16|swap|remove_special_word| |0.9130|MSE| |
 |7|monologg/koelectra-base-v3-discriminator|0.9919|2e-5|64|swap|nremove_special_word|180|0.9110|MSE|train, test split|
-|8|monologg/koelectra-base-v3-discriminator|0.9242|14e-6|32|create_5_1, swap, hangulize|remove_special_word|100|0.9104|MSE| |
+|8|monologg/koelectra-base-v3-discriminator|0.9242|14e-6|32|create_5_1, swap|remove_special_word, hangulize|100|0.9104|MSE| |
 
 ## 7.1 앙상블 결과
 
