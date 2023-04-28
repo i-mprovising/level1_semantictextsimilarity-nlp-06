@@ -119,11 +119,11 @@ train data의 source 별 label 분포. sampled data는 positive skewness를 보�
 
 ### 5.1.2 hangulize
 
-`hangulize`는 'OPIC'을 '오픽'으로 변환해주는 등 영어를 한글 발음으로 바꿔주는 라이브러리이다.
+`hangulize`는 'OPIC'을 '오픽'으로 변환해주는 등 외래어를 한글 발음으로 바꿔주는 라이브러리이다. 
 
 <img src='./images/hangulize.png'/>
 
-모델이 예측한 validation data의 label과 실제 정답 값을 비교했을 때 영어 단어가 한글로 되어서 실제 정답 점수는 높은데 모델이 label을 낮게 주는 경우가 다소 있었다. 이에 우리는 모델이 두 단어를 서로 다른 단어로 인식하여 낮은 점수를 주었다고 가정하여, 외래어 단어를 한글 발음으로 바꿔주는 `hangulize` 라이브러리를 통해 데이터를 클리닝했다.
+모델이 예측한 validation data의 label과 실제 정답 값을 비교했을 때 영어 단어가 한글로 되어서 실제 정답 점수는 높은데 모델이 label을 낮게 주는 경우가 다소 있었다. 이에 우리는 모델이 두 단어를 서로 다른 단어로 인식하여 낮은 점수를 주었다고 가정하여, `hangulize` 라이브러리를 통해 데이터를 클리닝했다.
 
 ### 5.1.3 Label Smoothing
 
@@ -156,7 +156,7 @@ Okt 라이브러리를 사용하여 형태소 단위로 끊어 불용어에 해�
 - random swap : 단어들의 위치를 무작위로 변경
 - random deletion : 단어 무작위 삭제
 
-품사 태깅은 OKt 사용, 확률 p값은 초기에는 0.3으로 진행 후 논문 상 sweet spot이 0.1이라 변경해서 적용했다. 초반에는 단순히 sentence_1 컬럼과 sentence_2 컬럼에 둘 다 적용하여 데이터 증강을 진행했는데, 이는 오히려 label의 의미를 해치는 것이 아닌가 하여 한 컬럼에 변형을 가하면 그 쌍이 되는 문장은 기존 문장으로 삽입하여 데이터 증강을 시도해 보았다. Random Swap 외에는 유의미한 성능 향상을 보이지 않았다.
+품사 태깅은 Okt 사용, 확률 p값은 초기에는 0.3으로 진행 후 논문 상 sweet spot이 0.1이라 변경해서 적용했다. 초반에는 단순히 sentence_1 컬럼과 sentence_2 컬럼에 둘 다 적용하여 데이터 증강을 진행했는데, 이는 오히려 label의 의미를 해치는 것이 아닌가 하여 한 컬럼에 변형을 가하면 그 쌍이 되는 문장은 기존 문장으로 삽입하여 데이터 증강을 시도해 보았다. Random Swap 외에는 유의미한 성능 향상을 보이지 않았다.
 
 ### 5.2.3 Back Translation
 
@@ -179,4 +179,28 @@ SMOTE는 정형 데이터에서 사용하는 데이터 증강 기법으로 imbal
 - snunlp/KR-ELECTRA-discriminator
 - monologg/koelectra-base-v3-discriminator
 
+## 6.1 기본 모델 성능
+|Model|Loss|Learning Rate|Batch Size|Val Pearson|
+|:---|:---|:---|:---|:---|
+|snunlp/KR-ELECTRA-discriminator|MSE|1e-5|32|0.92639|
+|monologg/koelectra-base-v3-discriminator|MSE|1e-5|32|0.92112|
+
 # 7. 실험 환경
+
+| |Model|Val Pearson|Learing Rate|Batch Size|Data Augmentation|Data Cleaning|max_len|public 리더보드 점수|Loss|비고|
+|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
+|1|snunlp/KR-ELECTRA-discriminator|0.9917|1e-5|32|swap|remove_special_word| |0.9241|MSE|train, test split|
+|2|snunlp/KR-ELECTRA-discriminator|0.9945|1e-5|16|swap, create_5_1200|none|180|0.9234|MSE|train, test split|
+|3|snunlp/KR-ELECTRA-discriminator|0.9931|1e-5|32|swap|remove_special_word|180|0.9220|MSE|train, test split|
+|4|snunlp/KR-ELECTRA-discriminator|0.9329|1e-5|32|swap, create_5_1|process_eng|140|0.9220|MSE| |
+|5|snunlp/KR-ELECTRA-discriminator|0.9292|1e-5|32|swap|none| |0.9217|MSE| |
+|6|monologg/koelectra-base-v3-discriminator|0.9223|2e-5|16|swap|remove_special_word| |0.9130|MSE| |
+|7|monologg/koelectra-base-v3-discriminator|0.9919|2e-5|64|swap|nremove_special_word|180|0.9110|MSE|train, test split|
+|8|monologg/koelectra-base-v3-discriminator|0.9242|14e-6|32|create_5_1, swap, hangulize|remove_special_word|100|0.9104|MSE| |
+
+## 7.1 앙상블 결과
+
+|합친 모델 목록|앙상블 방법|기존 성능|개선 성능|
+|:---|:---|:---|:---|
+|1, 5, 6|soft voting|0.9241|0.9294|
+|2, 4, 6|soft voting|0.9234|0.9297|
