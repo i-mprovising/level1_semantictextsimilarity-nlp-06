@@ -190,13 +190,13 @@ SMOTE는 정형 데이터에서 사용하는 데이터 증강 기법으로 imbal
 | |Model|Val Pearson|Learing Rate|Batch Size|Data Augmentation|Data Cleaning|max_len|public 리더보드 점수|Loss|비고|
 |:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
 |1|snunlp/KR-ELECTRA-discriminator|0.9917|1e-5|32|swap|remove_special_word| |0.9241|MSE|train, test split|
-|2|snunlp/KR-ELECTRA-discriminator|0.9945|1e-5|16|swap, create_5_1200|none|180|0.9234|MSE|train, test split|
+|2|snunlp/KR-ELECTRA-discriminator|0.9945|1e-5|16|swap, label smoothing|none|180|0.9234|MSE|train, test split|
 |3|snunlp/KR-ELECTRA-discriminator|0.9931|1e-5|32|swap|remove_special_word|180|0.9220|MSE|train, test split|
-|4|snunlp/KR-ELECTRA-discriminator|0.9329|1e-5|32|swap, create_5_1|process_eng|140|0.9220|MSE| |
+|4|snunlp/KR-ELECTRA-discriminator|0.9329|1e-5|32|swap, label smoothing|process_eng|140|0.9220|MSE| |
 |5|snunlp/KR-ELECTRA-discriminator|0.9292|1e-5|32|swap|none| |0.9217|MSE| |
 |6|monologg/koelectra-base-v3-discriminator|0.9223|2e-5|16|swap|remove_special_word| |0.9130|MSE| |
-|7|monologg/koelectra-base-v3-discriminator|0.9919|2e-5|64|swap|nremove_special_word|180|0.9110|MSE|train, test split|
-|8|monologg/koelectra-base-v3-discriminator|0.9242|14e-6|32|create_5_1, swap|remove_special_word, hangulize|100|0.9104|MSE| |
+|7|monologg/koelectra-base-v3-discriminator|0.9919|2e-5|64|swap|remove_special_word|180|0.9110|MSE|train, test split|
+|8|monologg/koelectra-base-v3-discriminator|0.9242|14e-6|32|label smoothing, swap|remove_special_word, hangulize|100|0.9104|MSE| |
 
 ## 7.1 앙상블 결과
 
