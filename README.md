@@ -29,9 +29,9 @@
             <br />
         </td>
         <td align="center" width="150px">
-            <a href="https://github.com/seongeun-k"><img height="120px" width="120px" src="https://avatars.githubusercontent.com/seongeun-k"/></a>
+            <a href="https://github.com/i-mprovising"><img height="120px" width="120px" src="https://avatars.githubusercontent.com/i-mprovising"/></a>
             <br/>
-            <a href="https://github.com/seongeun-k"><strong>김성은</strong></a>
+            <a href="https://github.com/i-mprovising"><strong>김성은</strong></a>
             <br />
         </td>
         <td align="center" width="150px">
